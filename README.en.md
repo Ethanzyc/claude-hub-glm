@@ -43,33 +43,30 @@ The plugin auto-detects your Zhipu API Key from environment variables (either on
 
 ## Install
 
-### Option 1: Install from GitHub (Recommended)
+Inside a Claude Code instance, run the following commands:
 
-```bash
-# Clone the repository
-git clone https://github.com/Ethanzyc/claude-hub-glm.git
-cd claude-hub-glm
-
-# Install dependencies and build
-npm ci && npm run build
-
-# Manually configure statusLine in Claude Code (see configuration below)
+**Step 1: Add the marketplace**
+```
+/plugin marketplace add Ethanzyc/claude-hub-glm
 ```
 
-### Option 2: Install as Plugin from Local Path
-
-Inside a Claude Code instance:
-
+**Step 2: Install the plugin**
 ```
-/plugin install /path/to/claude-hub-glm
+/plugin install claude-hub-glm
 ```
 
-After installation:
+After that, reload plugins:
 
 ```
 /reload-plugins
+```
+
+**Step 3: Configure the statusline**
+```
 /claude-hud:setup
 ```
+
+Done! Restart Claude Code to see the HUD.
 
 <details>
 <summary><strong>⚠️ Linux users: Click here first</strong></summary>

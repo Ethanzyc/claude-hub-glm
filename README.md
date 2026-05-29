@@ -43,33 +43,30 @@
 
 ## 安装
 
-### 方式一：从 GitHub 安装（推荐）
+在 Claude Code 中运行以下命令：
 
-```bash
-# 克隆仓库
-git clone https://github.com/Ethanzyc/claude-hub-glm.git
-cd claude-hub-glm
-
-# 安装依赖并构建
-npm ci && npm run build
-
-# 在 Claude Code 中手动配置 statusLine（参考下方配置说明）
+**步骤 1：添加市场**
+```
+/plugin marketplace add Ethanzyc/claude-hub-glm
 ```
 
-### 方式二：从本地路径安装为插件
-
-在 Claude Code 中运行：
-
+**步骤 2：安装插件**
 ```
-/plugin install /path/to/claude-hub-glm
+/plugin install claude-hub-glm
 ```
 
-安装完成后：
+安装完成后，重新加载插件：
 
 ```
 /reload-plugins
+```
+
+**步骤 3：配置状态栏**
+```
 /claude-hud:setup
 ```
+
+完成！重启 Claude Code 即可看到 HUD。
 
 <details>
 <summary><strong>⚠️ Linux 用户：请先点击此处</strong></summary>
