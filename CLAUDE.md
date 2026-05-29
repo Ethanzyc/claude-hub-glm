@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-Claude HUD is a Claude Code plugin that displays a real-time multi-line statusline. It shows context health, tool activity, agent status, and todo progress.
+Claude Hub GLM is a fork of [claude-hud](https://github.com/jarrodwatts/claude-hud) that adds Zhipu Coding Plan usage display. It shows context health, tool activity, agent status, todo progress, and Zhipu (智谱) plan quota.
 
 ## Build Commands
 
@@ -68,9 +68,11 @@ src/
 ├── config.ts          # Load/validate user config
 ├── git.ts             # Git status (branch, dirty, ahead/behind)
 ├── types.ts           # TypeScript interfaces
+├── zhipu-usage.ts     # Zhipu API: fetch quota/subscription, local cache
 └── render/
     ├── index.ts       # Main render coordinator
     ├── session-line.ts   # Compact mode: single line with all info
+    ├── zhipu-line.ts     # Zhipu usage line (5h/weekly/MCP/subscription)
     ├── tools-line.ts     # Tool activity (opt-in)
     ├── agents-line.ts    # Agent status (opt-in)
     ├── todos-line.ts     # Todo progress (opt-in)
@@ -94,6 +96,7 @@ Lines 1-2 always shown. Additional lines are opt-in via config:
 - Tools line (`showTools`): ◐ Edit: auth.ts | ✓ Read ×3
 - Agents line (`showAgents`): ◐ explore [haiku]: Finding auth code
 - Todos line (`showTodos`): ▸ Fix authentication bug (2/5)
+- Zhipu line (`showZhipu`): 智谱: 5h ██░░ 25% │ 本周 ████ 40% │ MCP 3/10
 - Environment line (`showConfigCounts`): 2 CLAUDE.md | 4 rules
 
 ### Context Thresholds

@@ -1,7 +1,7 @@
 {
-  "name": "claude-hud",
+  "name": "claude-hub-glm",
   "version": "0.1.0",
-  "description": "Real-time statusline HUD for Claude Code",
+  "description": "Real-time statusline HUD for Claude Code, with Zhipu (智谱) Coding Plan usage display",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -21,10 +21,14 @@
   "keywords": [
     "claude-code",
     "statusline",
-    "hud"
+    "hud",
+    "zhipu",
+    "glm"
   ],
-  "author": "Jarrod Watts",
+  "author": "Ethanzyc (fork of jarrodwatts/claude-hud)",
   "license": "MIT",
+  "repository": "https://github.com/Ethanzyc/claude-hub-glm",
+  "homepage": "https://github.com/Ethanzyc/claude-hub-glm",
   "engines": {
     "node": ">=18.0.0"
   },
