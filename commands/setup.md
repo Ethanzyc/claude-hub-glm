@@ -11,12 +11,12 @@ Check for inconsistent plugin state that can occur after failed installations:
 
 **macOS/Linux**:
 ```bash
-# Check 1: Cache exists?
+# Check 1: Cache exists? (checks both claude-hub-glm fork and upstream claude-hud)
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
-CACHE_EXISTS=$(ls -d "$CLAUDE_DIR/plugins/cache"/*/claude-hud 2>/dev/null && echo "YES" || echo "NO")
+CACHE_EXISTS=$(ls -d "$CLAUDE_DIR/plugins/cache"/*/@(claude-hub-glm|claude-hud) 2>/dev/null && echo "YES" || echo "NO")
 
 # Check 2: Registry entry exists?
-REGISTRY_EXISTS=$(grep -q "claude-hud" "$CLAUDE_DIR/plugins/installed_plugins.json" 2>/dev/null && echo "YES" || echo "NO")
+REGISTRY_EXISTS=$(grep -qE "claude-hub-glm|claude-hud" "$CLAUDE_DIR/plugins/installed_plugins.json" 2>/dev/null && echo "YES" || echo "NO")
 
 # Check 3: Temp files left behind?
 TEMP_FILES=$(ls -d "$CLAUDE_DIR/plugins/cache/temp_local_"* 2>/dev/null | head -1)
@@ -27,8 +27,8 @@ echo "Cache: $CACHE_EXISTS | Registry: $REGISTRY_EXISTS | Temp: ${TEMP_FILES:-no
 **Windows (PowerShell)**:
 ```powershell
 $claudeDir = if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $HOME ".claude" }
-$cache = (Get-ChildItem (Join-Path $claudeDir "plugins\cache") -Directory | ForEach-Object { Test-Path (Join-Path $_.FullName "claude-hud") }) -contains $true
-$registry = (Get-Content (Join-Path $claudeDir "plugins\installed_plugins.json") -ErrorAction SilentlyContinue) -match "claude-hud"
+$cache = (Get-ChildItem (Join-Path $claudeDir "plugins\cache") -Directory | ForEach-Object { Test-Path (Join-Path $_.FullName "claude-hub-glm") -or Test-Path (Join-Path $_.FullName "claude-hud") }) -contains $true
+$registry = (Get-Content (Join-Path $claudeDir "plugins\installed_plugins.json") -ErrorAction SilentlyContinue) -match "claude-hub-glm|claude-hud"
 $temp = Get-ChildItem (Join-Path $claudeDir "plugins\cache\temp_local_*") -ErrorAction SilentlyContinue
 Write-Host "Cache: $cache | Registry: $registry | Temp: $($temp.Count) files"
 ```
@@ -52,8 +52,8 @@ If ghost installation detected, ask user if they want to reset. If yes:
 ```bash
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 
-# Remove orphaned cache (handles both direct and marketplace installs)
-rm -rf "$CLAUDE_DIR/plugins/cache"/*/claude-hud
+# Remove orphaned cache (handles both fork and upstream installs)
+rm -rf "$CLAUDE_DIR/plugins/cache"/*/claude-hub-glm "$CLAUDE_DIR/plugins/cache"/*/claude-hud
 
 # Remove temp files from failed installs
 rm -rf "$CLAUDE_DIR/plugins/cache/temp_local_"*
@@ -67,8 +67,8 @@ echo '{"version": 2, "plugins": {}}' > "$CLAUDE_DIR/plugins/installed_plugins.js
 ```powershell
 $claudeDir = if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $HOME ".claude" }
 
-# Remove orphaned cache (handles both direct and marketplace installs)
-Get-ChildItem (Join-Path $claudeDir "plugins\cache") -Directory | ForEach-Object { Remove-Item -Recurse -Force (Join-Path $_.FullName "claude-hud") -ErrorAction SilentlyContinue }
+# Remove orphaned cache (handles both fork and upstream installs)
+Get-ChildItem (Join-Path $claudeDir "plugins\cache") -Directory | ForEach-Object { Remove-Item -Recurse -Force (Join-Path $_.FullName "claude-hub-glm") -ErrorAction SilentlyContinue; Remove-Item -Recurse -Force (Join-Path $_.FullName "claude-hud") -ErrorAction SilentlyContinue }
 
 # Remove temp files
 Remove-Item -Recurse -Force (Join-Path $claudeDir "plugins\cache\temp_local_*") -ErrorAction SilentlyContinue
@@ -77,7 +77,7 @@ Remove-Item -Recurse -Force (Join-Path $claudeDir "plugins\cache\temp_local_*") 
 '{"version": 2, "plugins": {}}' | Set-Content (Join-Path $claudeDir "plugins\installed_plugins.json")
 ```
 
-After cleanup, tell user to **restart Claude Code** and run `/plugin install claude-hud` again.
+After cleanup, tell user to **restart Claude Code** and run `/plugin install claude-hub-glm` again.
 
 ### Linux: Cross-Device Filesystem Check
 
@@ -88,7 +88,7 @@ After cleanup, tell user to **restart Claude Code** and run `/plugin install cla
 
 If this outputs `CROSS_DEVICE`, `/tmp` and home are on different filesystems. This causes `EXDEV: cross-device link not permitted` during installation. Workaround:
 ```bash
-mkdir -p ~/.cache/tmp && TMPDIR=~/.cache/tmp claude /plugin install claude-hud
+mkdir -p ~/.cache/tmp && TMPDIR=~/.cache/tmp claude /plugin install claude-hub-glm
 ```
 
 This is a [Claude Code platform limitation](https://github.com/anthropics/claude-code/issues/14799).
@@ -112,9 +112,9 @@ This is a [Claude Code platform limitation](https://github.com/anthropics/claude
 
 1. Get plugin path (sorted by dotted numeric version, not modification time):
    ```bash
-   ls -d "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/claude-hud/*/ 2>/dev/null | awk -F/ '{ print $(NF-1) "\t" $(0) }' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\t' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-
+   for name in claude-hub-glm claude-hud; do ls -d "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/$name/*/ 2>/dev/null; done | awk -F/ '{ print $(NF-1) "\t" $(0) }' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\t' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-
    ```
-   If empty, the plugin is not installed. Go back to Step 0 to check for ghost installation or EXDEV issues. If Step 0 was clean, ask the user to install via `/plugin install claude-hud` first.
+   If empty, the plugin is not installed. Go back to Step 0 to check for ghost installation or EXDEV issues. If Step 0 was clean, ask the user to install via `/plugin install claude-hub-glm` first.
 
 2. Get runtime absolute path:
    - On `darwin` or `linux`, prefer bun for performance and fall back to node:
@@ -158,12 +158,12 @@ This is a [Claude Code platform limitation](https://github.com/anthropics/claude
 
    **When runtime is bun** - add `--env-file /dev/null` to prevent Bun from auto-loading project `.env` files:
    ```
-   bash -c 'cols=$(stty size </dev/tty 2>/dev/null | awk '"'"'{print $2}'"'"'); export COLUMNS=$(( ${cols:-120} > 4 ? ${cols:-120} - 4 : 1 )); plugin_dir=$(ls -d "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/claude-hud/*/ 2>/dev/null | awk -F/ '"'"'{ print $(NF-1) "\t" $(0) }'"'"' | grep -E '"'"'^[0-9]+\.[0-9]+\.[0-9]+\t'"'"' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-); exec "{RUNTIME_PATH}" --env-file /dev/null "${plugin_dir}{SOURCE}"'
+   bash -c 'cols=$(stty size </dev/tty 2>/dev/null | awk '"'"'{print $2}'"'"'); export COLUMNS=$(( ${cols:-120} > 4 ? ${cols:-120} - 4 : 1 )); plugin_dir=$(for name in claude-hub-glm claude-hud; do ls -d "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/$name/*/ 2>/dev/null; done | awk -F/ '"'"'{ print $(NF-1) "\t" $(0) }'"'"' | grep -E '"'"'^[0-9]+\.[0-9]+\.[0-9]+\t'"'"' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-); exec "{RUNTIME_PATH}" --env-file /dev/null "${plugin_dir}{SOURCE}"'
    ```
 
    **When runtime is node**:
    ```
-   bash -c 'cols=$(stty size </dev/tty 2>/dev/null | awk '"'"'{print $2}'"'"'); export COLUMNS=$(( ${cols:-120} > 4 ? ${cols:-120} - 4 : 1 )); plugin_dir=$(ls -d "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/claude-hud/*/ 2>/dev/null | awk -F/ '"'"'{ print $(NF-1) "\t" $(0) }'"'"' | grep -E '"'"'^[0-9]+\.[0-9]+\.[0-9]+\t'"'"' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-); exec "{RUNTIME_PATH}" "${plugin_dir}{SOURCE}"'
+   bash -c 'cols=$(stty size </dev/tty 2>/dev/null | awk '"'"'{print $2}'"'"'); export COLUMNS=$(( ${cols:-120} > 4 ? ${cols:-120} - 4 : 1 )); plugin_dir=$(for name in claude-hub-glm claude-hud; do ls -d "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/$name/*/ 2>/dev/null; done | awk -F/ '"'"'{ print $(NF-1) "\t" $(0) }'"'"' | grep -E '"'"'^[0-9]+\.[0-9]+\.[0-9]+\t'"'"' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-); exec "{RUNTIME_PATH}" "${plugin_dir}{SOURCE}"'
    ```
 
 **Windows + Git Bash** (Platform: `win32`, Shell: `bash`):
@@ -177,7 +177,7 @@ On Windows require `node` and always use `dist/index.js`.
 Instead, use `sort -V` (GNU version sort, included with Git for Windows) which avoids nested single quotes entirely. Also avoid wrapping the generated command in a second `bash -c ...` layer. Claude Code is already invoking the statusline through bash, so the direct shell command lets `exec` replace that shell instead of spawning an extra bash wrapper first. The command still exports `COLUMNS` so the HUD receives the real terminal width, and it uses the marketplace-aware cache glob:
 
    ```
-   cols=$(stty size </dev/tty 2>/dev/null | awk '{print $2}'); export COLUMNS=$(( ${cols:-120} > 4 ? ${cols:-120} - 4 : 1 )); plugin_dir=$(ls -1d "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/claude-hud/*/ 2>/dev/null | sort -V | tail -1); exec "{RUNTIME_PATH}" "${plugin_dir}{SOURCE}"
+   cols=$(stty size </dev/tty 2>/dev/null | awk '{print $2}'); export COLUMNS=$(( ${cols:-120} > 4 ? ${cols:-120} - 4 : 1 )); plugin_dir=$(for name in claude-hub-glm claude-hud; do ls -1d "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/$name/*/ 2>/dev/null; done | sort -V | tail -1); exec "{RUNTIME_PATH}" "${plugin_dir}{SOURCE}"
    ```
 
 **Windows + PowerShell** (Platform: `win32`, Shell: `powershell`, `pwsh`, or `cmd`):
@@ -185,7 +185,7 @@ Instead, use `sort -V` (GNU version sort, included with Git for Windows) which a
 1. Get plugin path:
    ```powershell
    $claudeDir = if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $HOME ".claude" }
-   (Get-ChildItem (Join-Path $claudeDir "plugins\cache\*\claude-hud") -Directory | Where-Object { $_.Name -match '^\d+(\.\d+)+$' } | Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1).FullName
+   ((Get-ChildItem (Join-Path $claudeDir "plugins\cache\*\claude-hub-glm") -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d+(\.\d+)+$' } | Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1), (Get-ChildItem (Join-Path $claudeDir "plugins\cache\*\claude-hud") -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d+(\.\d+)+$' } | Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1) | Where-Object { $_ } | Select-Object -First 1).FullName
    ```
    If empty or errors, the plugin is not installed. Ask the user to install via marketplace first.
 
@@ -211,7 +211,7 @@ Instead, use `sort -V` (GNU version sort, included with Git for Windows) which a
    accounts for Claude Code's input area padding (2 columns on each side).
 
    ```
-   powershell -Command "& {$env:COLUMNS=[Math]::Max(1,[Console]::WindowWidth-4); $claudeDir=if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $HOME '.claude' }; $p=(Get-ChildItem (Join-Path $claudeDir 'plugins\cache\*\claude-hud') -Directory | Where-Object { $_.Name -match '^\d+(\.\d+)+$' } | Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1).FullName; & '{RUNTIME_PATH}' (Join-Path $p '{SOURCE}')}"
+   powershell -Command "& {$env:COLUMNS=[Math]::Max(1,[Console]::WindowWidth-4); $claudeDir=if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $HOME '.claude' }; $p=((Get-ChildItem (Join-Path $claudeDir 'plugins\cache\*\claude-hub-glm') -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d+(\.\d+)+$' } | Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1), (Get-ChildItem (Join-Path $claudeDir 'plugins\cache\*\claude-hud') -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d+(\.\d+)+$' } | Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1) | Where-Object { $_ } | Select-Object -First 1).FullName; & '{RUNTIME_PATH}' (Join-Path $p '{SOURCE}')}"
    ```
 
 **WSL (Windows Subsystem for Linux)**: If running in WSL, use the macOS/Linux instructions. Ensure the plugin is installed in the Linux environment (`${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/...`), not the Windows side.
@@ -325,7 +325,7 @@ Use AskUserQuestion:
    - Solution: re-detect the runtime path (`command -v node` on Windows, `command -v bun` or `command -v node` on macOS/Linux), and verify with `realpath {RUNTIME_PATH}` (or `readlink -f {RUNTIME_PATH}`) to get the true absolute path
 
    **"No such file or directory" for plugin**:
-   - Plugin might not be installed: `ls "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/claude-hud/`
+   - Plugin might not be installed: `ls "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/{claude-hub-glm,claude-hud}/`
    - Solution: reinstall plugin via marketplace
 
    **Windows shell mismatch (for example, "bash not recognized")**:
@@ -340,6 +340,6 @@ Use AskUserQuestion:
 
    **WSL confusion**:
    - If using WSL, ensure plugin is installed in Linux environment, not Windows
-   - Check: `ls "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/claude-hud/`
+   - Check: `ls "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/plugins/cache/*/{claude-hub-glm,claude-hud}/`
 
 5. **If still stuck**: Show the user the exact command that was generated and the error, so they can report it or debug further
