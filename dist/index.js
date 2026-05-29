@@ -10,6 +10,7 @@ import { getMemoryUsage } from "./memory.js";
 import { resolveEffortLevel } from "./effort.js";
 import { applyContextWindowFallback } from "./context-cache.js";
 import { getUsageFromExternalSnapshot } from "./external-usage.js";
+import { getZhipuUsage } from "./zhipu-usage.js";
 import { setLanguage, t } from "./i18n/index.js";
 export { getUsageFromExternalSnapshot } from "./external-usage.js";
 import { fileURLToPath } from "node:url";
@@ -19,6 +20,7 @@ export async function main(overrides = {}) {
         readStdin,
         getUsageFromStdin,
         getUsageFromExternalSnapshot,
+        getZhipuUsage,
         parseTranscript,
         countConfigs,
         getGitStatus,
@@ -77,6 +79,9 @@ export async function main(overrides = {}) {
         const memoryUsage = config.display.showMemoryUsage && config.lineLayout === "expanded"
             ? await deps.getMemoryUsage()
             : null;
+        const zhipuUsage = config.display.showZhipu
+            ? deps.getZhipuUsage(config, deps.now())
+            : null;
         const ctx = {
             stdin,
             transcript,
@@ -94,6 +99,7 @@ export async function main(overrides = {}) {
             claudeCodeVersion,
             effortLevel: effortInfo?.level,
             effortSymbol: effortInfo?.symbol,
+            zhipuUsage,
         };
         deps.render(ctx);
     }

@@ -23,6 +23,11 @@ export const en = {
     "format.out": "out",
     "format.tok": "tok",
     "format.tokPerSec": "tok/s",
+    // Zhipu
+    "label.zhipu": "Zhipu",
+    "label.mcp": "MCP",
+    "label.weeklyZhipu": "Week",
+    "format.renews": "renews",
     // Init
     "init.initializing": "[claude-hud] Initializing...",
     "init.macosNote": "[claude-hud] Note: On macOS, you may need to restart Claude Code for the HUD to appear.",

@@ -12,6 +12,7 @@ export const DEFAULT_ELEMENT_ORDER = [
     'tools',
     'agents',
     'todos',
+    'zhipu',
 ];
 export const DEFAULT_MERGE_GROUPS = [
     ['context', 'usage'],
@@ -67,6 +68,9 @@ export const DEFAULT_CONFIG = {
         environmentThreshold: 0,
         externalUsagePath: '',
         externalUsageFreshnessMs: 300000,
+        showZhipu: true,
+        zhipuCachePath: '',
+        zhipuFreshnessMs: 300000,
         modelFormat: 'full',
         modelOverride: '',
         customLine: '',
@@ -371,6 +375,11 @@ export function mergeConfig(userConfig) {
         environmentThreshold: validateThreshold(migrated.display?.environmentThreshold, 100),
         externalUsagePath: validateOptionalPath(migrated.display?.externalUsagePath),
         externalUsageFreshnessMs: validateFreshnessMs(migrated.display?.externalUsageFreshnessMs),
+        showZhipu: typeof migrated.display?.showZhipu === 'boolean'
+            ? migrated.display.showZhipu
+            : DEFAULT_CONFIG.display.showZhipu,
+        zhipuCachePath: validateOptionalPath(migrated.display?.zhipuCachePath),
+        zhipuFreshnessMs: validateFreshnessMs(migrated.display?.zhipuFreshnessMs),
         modelFormat: validateModelFormat(migrated.display?.modelFormat)
             ? migrated.display.modelFormat
             : DEFAULT_CONFIG.display.modelFormat,

@@ -19,7 +19,7 @@ export type GitBranchOverflowMode = 'truncate' | 'wrap';
  */
 export type ModelFormatMode = 'full' | 'compact' | 'short';
 export type TimeFormatMode = 'relative' | 'absolute' | 'both';
-export type HudElement = 'project' | 'context' | 'usage' | 'promptCache' | 'memory' | 'environment' | 'tools' | 'agents' | 'todos';
+export type HudElement = 'project' | 'context' | 'usage' | 'promptCache' | 'memory' | 'environment' | 'tools' | 'agents' | 'todos' | 'zhipu';
 export type HudColorName =
   | 'dim'
   | 'red'
@@ -57,6 +57,7 @@ export const DEFAULT_ELEMENT_ORDER: HudElement[] = [
   'tools',
   'agents',
   'todos',
+  'zhipu',
 ];
 
 export const DEFAULT_MERGE_GROUPS: HudElement[][] = [
@@ -115,6 +116,9 @@ export interface HudConfig {
     environmentThreshold: number;
     externalUsagePath: string;
     externalUsageFreshnessMs: number;
+    showZhipu: boolean;
+    zhipuCachePath: string;
+    zhipuFreshnessMs: number;
     modelFormat: ModelFormatMode;
     modelOverride: string;
     customLine: string;
@@ -173,6 +177,9 @@ export const DEFAULT_CONFIG: HudConfig = {
     environmentThreshold: 0,
     externalUsagePath: '',
     externalUsageFreshnessMs: 300000,
+    showZhipu: true,
+    zhipuCachePath: '',
+    zhipuFreshnessMs: 300000,
     modelFormat: 'full',
     modelOverride: '',
     customLine: '',
@@ -525,6 +532,11 @@ export function mergeConfig(userConfig: Partial<HudConfig>): HudConfig {
     environmentThreshold: validateThreshold(migrated.display?.environmentThreshold, 100),
     externalUsagePath: validateOptionalPath(migrated.display?.externalUsagePath),
     externalUsageFreshnessMs: validateFreshnessMs(migrated.display?.externalUsageFreshnessMs),
+    showZhipu: typeof migrated.display?.showZhipu === 'boolean'
+      ? migrated.display.showZhipu
+      : DEFAULT_CONFIG.display.showZhipu,
+    zhipuCachePath: validateOptionalPath(migrated.display?.zhipuCachePath),
+    zhipuFreshnessMs: validateFreshnessMs(migrated.display?.zhipuFreshnessMs),
     modelFormat: validateModelFormat(migrated.display?.modelFormat)
       ? migrated.display.modelFormat
       : DEFAULT_CONFIG.display.modelFormat,

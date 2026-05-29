@@ -119,6 +119,29 @@ export interface TranscriptData {
   lastCompactPostTokens?: number;
 }
 
+export interface ZhipuUsageCache {
+  updatedAt: number;
+  fiveHour: {
+    percent: number;
+    resetsAt: number | null;
+  };
+  weekly: {
+    percent: number;
+    resetsAt: number | null;
+  };
+  mcp: {
+    used: number;
+    total: number;
+    percent: number;
+    resetsAt: number | null;
+  };
+  subscription: {
+    plan: string;
+    status: string;
+    nextRenewTime: string | null;
+  } | null;
+}
+
 export interface RenderContext {
   stdin: StdinData;
   transcript: TranscriptData;
@@ -136,4 +159,5 @@ export interface RenderContext {
   claudeCodeVersion?: string;
   effortLevel?: string;
   effortSymbol?: string;
+  zhipuUsage: ZhipuUsageCache | null;
 }

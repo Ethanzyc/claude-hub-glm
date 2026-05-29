@@ -28,6 +28,12 @@ export const en: Messages = {
   "format.tok": "tok",
   "format.tokPerSec": "tok/s",
 
+  // Zhipu
+  "label.zhipu": "Zhipu",
+  "label.mcp": "MCP",
+  "label.weeklyZhipu": "Week",
+  "format.renews": "renews",
+
   // Init
   "init.initializing": "[claude-hud] Initializing...",
   "init.macosNote":

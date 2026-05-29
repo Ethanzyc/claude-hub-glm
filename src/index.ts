@@ -10,6 +10,7 @@ import { getMemoryUsage } from "./memory.js";
 import { resolveEffortLevel } from "./effort.js";
 import { applyContextWindowFallback } from "./context-cache.js";
 import { getUsageFromExternalSnapshot } from "./external-usage.js";
+import { getZhipuUsage } from "./zhipu-usage.js";
 import { setLanguage, t } from "./i18n/index.js";
 import type { RenderContext } from "./types.js";
 
@@ -21,6 +22,7 @@ export type MainDeps = {
   readStdin: typeof readStdin;
   getUsageFromStdin: typeof getUsageFromStdin;
   getUsageFromExternalSnapshot: typeof getUsageFromExternalSnapshot;
+  getZhipuUsage: typeof getZhipuUsage;
   parseTranscript: typeof parseTranscript;
   countConfigs: typeof countConfigs;
   getGitStatus: typeof getGitStatus;
@@ -40,6 +42,7 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
     readStdin,
     getUsageFromStdin,
     getUsageFromExternalSnapshot,
+    getZhipuUsage,
     parseTranscript,
     countConfigs,
     getGitStatus,
@@ -113,6 +116,10 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
         ? await deps.getMemoryUsage()
         : null;
 
+    const zhipuUsage = config.display.showZhipu
+      ? deps.getZhipuUsage(config, deps.now())
+      : null;
+
     const ctx: RenderContext = {
       stdin,
       transcript,
@@ -130,6 +137,7 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
       claudeCodeVersion,
       effortLevel: effortInfo?.level,
       effortSymbol: effortInfo?.symbol,
+      zhipuUsage,
     };
 
     deps.render(ctx);

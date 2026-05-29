@@ -9,11 +9,13 @@ import { getClaudeCodeVersion } from "./version.js";
 import { getMemoryUsage } from "./memory.js";
 import { applyContextWindowFallback } from "./context-cache.js";
 import { getUsageFromExternalSnapshot } from "./external-usage.js";
+import { getZhipuUsage } from "./zhipu-usage.js";
 export { getUsageFromExternalSnapshot } from "./external-usage.js";
 export type MainDeps = {
     readStdin: typeof readStdin;
     getUsageFromStdin: typeof getUsageFromStdin;
     getUsageFromExternalSnapshot: typeof getUsageFromExternalSnapshot;
+    getZhipuUsage: typeof getZhipuUsage;
     parseTranscript: typeof parseTranscript;
     countConfigs: typeof countConfigs;
     getGitStatus: typeof getGitStatus;

@@ -12,7 +12,7 @@ export type GitBranchOverflowMode = 'truncate' | 'wrap';
  */
 export type ModelFormatMode = 'full' | 'compact' | 'short';
 export type TimeFormatMode = 'relative' | 'absolute' | 'both';
-export type HudElement = 'project' | 'context' | 'usage' | 'promptCache' | 'memory' | 'environment' | 'tools' | 'agents' | 'todos';
+export type HudElement = 'project' | 'context' | 'usage' | 'promptCache' | 'memory' | 'environment' | 'tools' | 'agents' | 'todos' | 'zhipu';
 export type HudColorName = 'dim' | 'red' | 'green' | 'yellow' | 'magenta' | 'cyan' | 'brightBlue' | 'brightMagenta';
 /** A color value: named preset, 256-color index (0-255), or hex string (#rrggbb). */
 export type HudColorValue = HudColorName | number | string;
@@ -81,6 +81,9 @@ export interface HudConfig {
         environmentThreshold: number;
         externalUsagePath: string;
         externalUsageFreshnessMs: number;
+        showZhipu: boolean;
+        zhipuCachePath: string;
+        zhipuFreshnessMs: number;
         modelFormat: ModelFormatMode;
         modelOverride: string;
         customLine: string;

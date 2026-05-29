@@ -5,6 +5,7 @@ import { renderSessionLine } from './session-line.js';
 import { renderToolsLine } from './tools-line.js';
 import { renderAgentsLine } from './agents-line.js';
 import { renderTodosLine } from './todos-line.js';
+import { renderZhipuLine } from './zhipu-line.js';
 import {
   renderIdentityLine,
   renderProjectLine,
@@ -380,6 +381,8 @@ function renderElementLine(
       return display?.showAgents === false ? null : renderAgentsLine(ctx);
     case 'todos':
       return display?.showTodos === false ? null : renderTodosLine(ctx);
+    case 'zhipu':
+      return renderZhipuLine(ctx);
   }
 }
 

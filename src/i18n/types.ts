@@ -23,6 +23,11 @@ export type MessageKey =
   | "format.out"
   | "format.tok"
   | "format.tokPerSec"
+  // Zhipu
+  | "label.zhipu"
+  | "label.mcp"
+  | "label.weeklyZhipu"
+  | "format.renews"
   // Init
   | "init.initializing"
   | "init.macosNote";

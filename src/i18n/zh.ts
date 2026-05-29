@@ -28,6 +28,12 @@ export const zh: Messages = {
   "format.tok": "令牌",
   "format.tokPerSec": "tok/s",
 
+  // Zhipu
+  "label.zhipu": "智谱",
+  "label.mcp": "MCP",
+  "label.weeklyZhipu": "本周",
+  "format.renews": "续费",
+
   // Init
   "init.initializing": "[claude-hud] 正在初始化...",
   "init.macosNote":
