@@ -409,10 +409,9 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 ---
 
-## Task 6: 编译产物入库 + 冒烟验证
+## Task 6: 最终构建验证 + 冒烟
 
-**Files:**
-- Modify: `dist/`（编译产物，项目惯例入库）
+> **dist/ 由 CI 自动管理**：`.gitignore` 含 `dist/`，但 main 上的 dist 由 CI（`.github/workflows/build-dist.yml`）在 merge 后自动 build 并 commit。开发时**不手动 `git add dist` / commit dist**——每个 src task 的 build 会让 dist 出现未提交变化，这是正常的，留给 CI 处理。
 
 - [ ] **Step 1: 全量构建**
 
@@ -434,14 +433,10 @@ npm run test:stdin 2>&1 | tail -5
 
 Expected: 正常输出智谱行。**若运行时刻恰在 14:00–18:00**，应看到 `⚡高峰 14–18`；否则该标记不出现（符合"按需显示"）。无法人工改时间时，以 Task 5 的单测为正确性凭据。
 
-- [ ] **Step 4: 提交 dist**
+- [ ] **Step 4: 确认工作区干净（除 dist/ 外）**
 
-```bash
-git add dist
-git commit -m "build: compile dist/ [auto]
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
-```
+Run: `git status --short`
+Expected: 仅剩 ` M dist/...` 行（build 产物，由 CI 处理），无未提交的 `src/` 或 `tests/` 文件。**不要 commit dist。**
 
 ---
 
