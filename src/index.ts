@@ -138,6 +138,7 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
       effortLevel: effortInfo?.level,
       effortSymbol: effortInfo?.symbol,
       zhipuUsage,
+      now: new Date(deps.now()),
     };
 
     deps.render(ctx);
