@@ -51,5 +51,4 @@ test('renders English Peak label', () => {
   const line = stripAnsi(renderZhipuLine(makeCtx(new Date(2026, 5, 30, 16, 0, 0))) ?? '');
   assert.ok(line.includes('Peak'), `expected Peak in ${line}`);
   assert.ok(line.includes('14–18'), `expected 14–18 in ${line}`);
-  setLanguage('en');
 });
