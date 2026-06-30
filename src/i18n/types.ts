@@ -28,6 +28,7 @@ export type MessageKey =
   | "label.mcp"
   | "label.weeklyZhipu"
   | "format.renews"
+  | "label.peakHour"
   // Init
   | "init.initializing"
   | "init.macosNote";

@@ -33,6 +33,7 @@ export const en: Messages = {
   "label.mcp": "MCP",
   "label.weeklyZhipu": "Week",
   "format.renews": "renews",
+  "label.peakHour": "Peak",
 
   // Init
   "init.initializing": "[claude-hud] Initializing...",

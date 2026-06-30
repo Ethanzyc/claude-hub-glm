@@ -33,6 +33,7 @@ export const zh: Messages = {
   "label.mcp": "MCP",
   "label.weeklyZhipu": "本周",
   "format.renews": "续费",
+  "label.peakHour": "高峰",
 
   // Init
   "init.initializing": "[claude-hud] 正在初始化...",

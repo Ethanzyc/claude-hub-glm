@@ -112,3 +112,10 @@ test("renderSessionTokensLine uses translated labels in Chinese", () => {
   assert.ok(!line.includes("Tokens"), `unexpected bare 'Tokens' label in zh output: ${line}`);
   setLanguage("en");
 });
+
+test("t() returns localized peak hour label", () => {
+  setLanguage("zh");
+  assert.equal(t("label.peakHour"), "高峰");
+  setLanguage("en");
+  assert.equal(t("label.peakHour"), "Peak");
+});
