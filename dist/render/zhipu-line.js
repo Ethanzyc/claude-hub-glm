@@ -1,5 +1,6 @@
-import { label, getQuotaColor, quotaBar, RESET } from './colors.js';
+import { label, getQuotaColor, quotaBar, warning, RESET } from './colors.js';
 import { getAdaptiveBarWidth } from '../utils/terminal.js';
+import { isPeakHour, PEAK_START_HOUR, PEAK_END_HOUR } from '../utils/peak-hour.js';
 import { t } from '../i18n/index.js';
 import { formatResetTime } from './format-reset-time.js';
 export function renderZhipuLine(ctx) {
@@ -10,6 +11,7 @@ export function renderZhipuLine(ctx) {
     const colors = ctx.config.colors;
     const barWidth = getAdaptiveBarWidth();
     const timeFormat = ctx.config.display.timeFormat ?? 'relative';
+    const now = ctx.now ?? new Date();
     const parts = [];
     const zhipuLabel = label(`${t('label.zhipu')}:`, colors);
     // 5-hour usage
@@ -49,8 +51,13 @@ export function renderZhipuLine(ctx) {
             : '';
         parts.push(`${label(sub.plan, colors)}${renewTime}`);
     }
+    // GLM peak-hour badge (only during 14:00–18:00 local)
+    if (ctx.config.display.showZhipuPeakHour !== false && isPeakHour(now)) {
+        const peakText = `⚡${t('label.peakHour')} ${PEAK_START_HOUR}–${PEAK_END_HOUR}`;
+        parts.push(warning(peakText, colors));
+    }
     // Data freshness
-    const ageMs = Date.now() - ctx.zhipuUsage.updatedAt;
+    const ageMs = now.getTime() - ctx.zhipuUsage.updatedAt;
     const ageStr = formatAge(ageMs);
     const freshLabel = label(`[${ageStr}]`, colors);
     return `${zhipuLabel} ${parts.join(' │ ')} ${freshLabel}`;

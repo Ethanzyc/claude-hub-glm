@@ -100,6 +100,7 @@ export async function main(overrides = {}) {
             effortLevel: effortInfo?.level,
             effortSymbol: effortInfo?.symbol,
             zhipuUsage,
+            now: new Date(deps.now()),
         };
         deps.render(ctx);
     }

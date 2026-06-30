@@ -144,5 +144,7 @@ export interface RenderContext {
     effortLevel?: string;
     effortSymbol?: string;
     zhipuUsage: ZhipuUsageCache | null;
+    /** 渲染时的基准时间，便于测试注入；生产由入口注入当前时间。 */
+    now?: Date;
 }
 //# sourceMappingURL=types.d.ts.map

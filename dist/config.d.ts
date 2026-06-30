@@ -82,6 +82,7 @@ export interface HudConfig {
         externalUsagePath: string;
         externalUsageFreshnessMs: number;
         showZhipu: boolean;
+        showZhipuPeakHour: boolean;
         zhipuCachePath: string;
         zhipuFreshnessMs: number;
         modelFormat: ModelFormatMode;

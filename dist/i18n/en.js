@@ -28,6 +28,7 @@ export const en = {
     "label.mcp": "MCP",
     "label.weeklyZhipu": "Week",
     "format.renews": "renews",
+    "label.peakHour": "Peak",
     // Init
     "init.initializing": "[claude-hud] Initializing...",
     "init.macosNote": "[claude-hud] Note: On macOS, you may need to restart Claude Code for the HUD to appear.",

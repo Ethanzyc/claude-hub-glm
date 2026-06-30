@@ -69,6 +69,7 @@ export const DEFAULT_CONFIG = {
         externalUsagePath: '',
         externalUsageFreshnessMs: 300000,
         showZhipu: true,
+        showZhipuPeakHour: true,
         zhipuCachePath: '',
         zhipuFreshnessMs: 300000,
         modelFormat: 'full',
@@ -378,6 +379,9 @@ export function mergeConfig(userConfig) {
         showZhipu: typeof migrated.display?.showZhipu === 'boolean'
             ? migrated.display.showZhipu
             : DEFAULT_CONFIG.display.showZhipu,
+        showZhipuPeakHour: typeof migrated.display?.showZhipuPeakHour === 'boolean'
+            ? migrated.display.showZhipuPeakHour
+            : DEFAULT_CONFIG.display.showZhipuPeakHour,
         zhipuCachePath: validateOptionalPath(migrated.display?.zhipuCachePath),
         zhipuFreshnessMs: validateFreshnessMs(migrated.display?.zhipuFreshnessMs),
         modelFormat: validateModelFormat(migrated.display?.modelFormat)
