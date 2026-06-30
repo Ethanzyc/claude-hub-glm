@@ -117,6 +117,7 @@ export interface HudConfig {
     externalUsagePath: string;
     externalUsageFreshnessMs: number;
     showZhipu: boolean;
+    showZhipuPeakHour: boolean;
     zhipuCachePath: string;
     zhipuFreshnessMs: number;
     modelFormat: ModelFormatMode;
@@ -178,6 +179,7 @@ export const DEFAULT_CONFIG: HudConfig = {
     externalUsagePath: '',
     externalUsageFreshnessMs: 300000,
     showZhipu: true,
+    showZhipuPeakHour: true,
     zhipuCachePath: '',
     zhipuFreshnessMs: 300000,
     modelFormat: 'full',
@@ -535,6 +537,9 @@ export function mergeConfig(userConfig: Partial<HudConfig>): HudConfig {
     showZhipu: typeof migrated.display?.showZhipu === 'boolean'
       ? migrated.display.showZhipu
       : DEFAULT_CONFIG.display.showZhipu,
+    showZhipuPeakHour: typeof migrated.display?.showZhipuPeakHour === 'boolean'
+      ? migrated.display.showZhipuPeakHour
+      : DEFAULT_CONFIG.display.showZhipuPeakHour,
     zhipuCachePath: validateOptionalPath(migrated.display?.zhipuCachePath),
     zhipuFreshnessMs: validateFreshnessMs(migrated.display?.zhipuFreshnessMs),
     modelFormat: validateModelFormat(migrated.display?.modelFormat)

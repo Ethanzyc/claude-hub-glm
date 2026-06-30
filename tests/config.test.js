@@ -654,3 +654,14 @@ test('mergeConfig rejects invalid hex strings', () => {
   assert.equal(config.colors.usage, DEFAULT_CONFIG.colors.usage);
   assert.equal(config.colors.warning, DEFAULT_CONFIG.colors.warning);
 });
+
+test('showZhipuPeakHour defaults to true and honors user override', () => {
+  const def = mergeConfig({});
+  assert.equal(def.display.showZhipuPeakHour, true, 'default should be true');
+
+  const off = mergeConfig({ display: { showZhipuPeakHour: false } });
+  assert.equal(off.display.showZhipuPeakHour, false, 'user false must be honored');
+
+  const invalid = mergeConfig({ display: { showZhipuPeakHour: 'nope' } });
+  assert.equal(invalid.display.showZhipuPeakHour, true, 'invalid value falls back to default true');
+});
